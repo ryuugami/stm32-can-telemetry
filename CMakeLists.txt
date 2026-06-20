@@ -7,8 +7,8 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/sensor_node/STM32F407VG_FLASH.ld)
 
 add_executable(sensor_node
-        sensor_node/startup_stm32f407.c
-        sensor_node/main.c
+        sensor_node/src/startup_stm32f407.c
+        sensor_node/src/main.c
 )
 
 set_target_properties(sensor_node PROPERTIES SUFFIX ".elf")
