@@ -1,0 +1,29 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 22, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "sensor-node-debug",
+      "displayName": "Sensor Node (F407) Debug",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/debug",
+      "toolchainFile": "${sourceDir}/arm-none-eabi.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "sensor-node-release",
+      "inherits": "sensor-node-debug",
+      "displayName": "Sensor Node (F407) Release",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "sensor-node-debug",   "configurePreset": "sensor-node-debug" },
+    { "name": "sensor-node-release", "configurePreset": "sensor-node-release" }
+  ]
+}
