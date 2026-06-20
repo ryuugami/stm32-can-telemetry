@@ -1,7 +1,6 @@
 #include <stdint.h>
 
 extern uint32_t _estack;
-extern uint32_t _etext;
 extern uint32_t _sidata;
 extern uint32_t _sdata;
 extern uint32_t _edata;
@@ -10,7 +9,10 @@ extern uint32_t _ebss;
 
 // forward declarations
 int main(void);
+static void copy_data_section(void);
+static void zero_bss_section(void);
 
+// forward declarations for vector table
 void Reset_Handler(void) __attribute__((noreturn));
 void NMI_Handler(void) __attribute__((weak, alias("Default_IRQHandler")));
 void HardFault_Handler(void) __attribute__((weak, alias("Default_IRQHandler")));
@@ -107,7 +109,7 @@ void FPU_IRQHandler(void) __attribute__((weak, alias("Default_IRQHandler")));
 
 uint32_t const vectors[] __attribute__((section(".isr_vector"))) =
 {
-    (uint32_T)&_estack,
+    (uint32_t)&_estack,
     (uint32_t)Reset_Handler,
     (uint32_t)NMI_Handler,
     (uint32_t)HardFault_Handler,
@@ -157,7 +159,7 @@ uint32_t const vectors[] __attribute__((section(".isr_vector"))) =
     (uint32_t)I2C1_EV_IRQHandler,
     (uint32_t)I2C1_ER_IRQHandler,
     (uint32_t)I2C2_EV_IRQHandler,
-    (uint32_t)(uint32_t)I2C2_ER_IRQHandler,
+    (uint32_t)I2C2_ER_IRQHandler,
     (uint32_t)SPI1_IRQHandler,
     (uint32_t)SPI2_IRQHandler,
     (uint32_t)USART1_IRQHandler,
@@ -213,5 +215,26 @@ void Default_IRQHandler(void) {
 }
 
 void Reset_Handler(void){
+	copy_data_section();
+	zero_bss_section();
 
+	main();
+
+	for(;;);
+}
+
+static void copy_data_section(void) {
+	uint32_t *src = &_sidata;
+	uint32_t *dst = &_sdata;
+
+	while (dst < &_edata) {
+		*dst++ = *src++;
+	}
+}
+
+static void zero_bss_section(void){
+	uint32_t *dst = &_sbss;
+	while (dst < &_ebss) {
+		*dst++ = 0;
+	}
 }
