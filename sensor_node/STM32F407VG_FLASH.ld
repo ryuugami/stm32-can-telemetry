@@ -13,7 +13,7 @@ SECTIONS
     .text :
     {
         . = ALIGN(4);
-        KEEP(*(.isr_vectors))
+        KEEP(*(.isr_vector))
         *(.text*)
         *(.rodata*)
         . = ALIGN(4);
@@ -37,7 +37,7 @@ SECTIONS
         _sbss = .;
         *(.bss*)
         *(COMMON)
-        . = ALIGN(4)
+        . = ALIGN(4);
         _ebss = .;
     }> sram
 }
