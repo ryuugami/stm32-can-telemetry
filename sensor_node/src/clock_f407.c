@@ -1,6 +1,8 @@
 #include "clock.h"
 #include "board_f407.h"
 
+static uint32_t calculate_pclk_hz(uint32_t ppre_val);
+
 void clock_init(void){
 
 }
@@ -45,11 +47,38 @@ uint32_t get_hclk_hz(void){
 
 
 uint32_t get_pclk1_hz(void){
-    //return BOARD_PCLK1_HZ;
+    
+    uint32_t const ppre1_value = (RCC->CFGR & RCC_CFGR_PPRE1_Msk) >> RCC_CFGR_PPRE1_Pos;
+    return calculate_pclk_hz(ppre1_value);
 }
 
 uint32_t get_pclk2_hz(void){
-    //return BOARD_PCLK2_HZ;
+    uint32_t const ppre2_value = (RCC->CFGR & RCC_CFGR_PPRE2_Msk) >> RCC_CFGR_PPRE2_Pos;
+    return calculate_pclk_hz(ppre2_value);
+}
+
+static uint32_t calculate_pclk_hz(uint32_t ppre_val){
+    uint32_t const hclk_hz = get_hclk_hz();
+    uint32_t apb_prescaler = 1;
+
+    switch (ppre_val) {
+        case 0b100:
+            apb_prescaler = 2;
+            break;
+        case 0b101:
+            apb_prescaler = 4;
+            break;
+        case 0b110:
+            apb_prescaler = 8;
+            break;
+        case 0b111:
+            apb_prescaler = 16;
+            break;
+        default:
+            apb_prescaler = 1;
+    }
+
+    return hclk_hz / apb_prescaler;
 }
 
 uint32_t get_sysclk_hz(void){
