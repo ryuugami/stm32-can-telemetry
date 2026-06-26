@@ -1,6 +1,8 @@
 #ifndef BOARD_F407_H
 #define BOARD_F407_H
 
+#include <stm32f4xx.h>
+
 /*
 * Clock calculations according to RM0090 p. 165
 * f(VCO clock) = f(PLL clock input) x (PLLN / PLLM)  
@@ -50,6 +52,7 @@
 */
 
 #define BOARD_HSE_HZ            8000000U    // Crystal used on the STM32f407-disc1
+#define BOARD_HSI_HZ            16000000U
 
 #define BOARD_PLL_P             2U          // See calculations above
 #define BOARD_PLL_M             4U          // See calculations above
